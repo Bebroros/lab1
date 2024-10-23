@@ -27,9 +27,24 @@ def compress_to_gzip(indir, outdir, filename) -> None:
     print("Gzip file created!")
 
 
+def ask_users_directory():
+    while True:
+        indir = Path(input("Enter path to your file: "))
+        if indir.exists():
+            break
+        print("Directory does not exist. Please try again.")
+    while True:
+        outdir = Path(input("Enter path to output directory: "))
+        if outdir.exists():
+            break
+        print("Directory does not exist. Please try again.")
+    return indir, outdir
+
+
 def main():
-    indir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2\birthday.txt')
-    outdir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2')
+    indir, outdir = ask_users_directory()
+    #indir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2')
+    #outdir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2')
     filename = input("Enter name of archive: ")
     compress_to_zip(indir, outdir, generate_archive_name(filename, outdir))
     compress_to_gzip(indir, outdir, generate_archive_name(filename, outdir))
