@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
 import zipfile
+import gzip
 
 
 def generate_archive_name(filename, outdir) -> str:
@@ -19,11 +20,19 @@ def compress_to_zip(indir, outdir, filename) -> None:
     print("Zip file created!")
 
 
+def compress_to_gzip(indir, outdir, filename) -> None:
+    print(filename)
+    with gzip.open(outdir/f'{filename}.gzip', 'wt') as gzip_file:
+        gzip_file.write(str(indir))
+    print("Gzip file created!")
+
+
 def main():
     indir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2\birthday.txt')
     outdir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2')
     filename = input("Enter name of archive: ")
     compress_to_zip(indir, outdir, generate_archive_name(filename, outdir))
+    compress_to_gzip(indir, outdir, generate_archive_name(filename, outdir))
 
 
 if __name__ == '__main__':
