@@ -16,7 +16,12 @@ def generate_archive_name(filename, outdir) -> str:
 
 def compress_to_zip(indir, outdir, filename) -> None:
     with zipfile.ZipFile(outdir/f'{filename}.zip', 'w', compression=zipfile.ZIP_DEFLATED) as zip_file:
-        zip_file.write(indir, indir.name)
+        if indir.is_dir():
+            list_of_files = [file for file in indir.rglob('*') if file.is_file() and file != outdir/f'{filename}.zip']
+            for file in list_of_files:
+                zip_file.write(file, file.name)
+        else:
+            zip_file.write(indir, indir.name)
     print("Zip file created!")
 
 
@@ -42,9 +47,9 @@ def ask_users_directory():
 
 
 def main():
-    indir, outdir = ask_users_directory()
-    #indir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2')
-    #outdir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2')
+    #indir, outdir = ask_users_directory()
+    indir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2\bebra\birthday.txt')
+    outdir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2\bebra')
     filename = input("Enter name of archive: ")
     compress_to_zip(indir, outdir, generate_archive_name(filename, outdir))
     compress_to_gzip(indir, outdir, generate_archive_name(filename, outdir))
