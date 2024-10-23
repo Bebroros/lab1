@@ -2,16 +2,17 @@ import datetime
 from pathlib import Path
 import zipfile
 import gzip
+import tarfile
 
 
 def generate_archive_name(filename, outdir) -> str:
     counter = 1
     while True:
         name = f"{filename}_{datetime.date.today().strftime('%Y%m%d')}_{counter}"
-        if Path(f"{outdir}/{name}.zip").exists() or Path(f"{outdir}/{name}.gz").exists():
+        if Path(f"{outdir}/{name}.zip").exists() or Path(f"{outdir}/{name}.gz").exists()\
+                or Path(f"{outdir}/{name}.tar.gz").exists():
             counter += 1
         else:
-            print(outdir / name)
             return name
 
 
@@ -24,15 +25,23 @@ def compress_to_zip(indir, outdir, filename, extension='*') -> None:
                 zip_file.write(file, file.relative_to(indir))
         else:
             zip_file.write(indir, indir.name)
-    print("Zip file created!")
+    print(rf"Zip file created in {outdir}\{filename}.zip!")
 
 
-def compress_to_gzip(indir, outdir, filename) -> None:
-    with open(indir, 'rb') as file:
-        data = file.read()
-        with gzip.open(outdir / f'{filename}.gz', 'wb') as gzip_file:
-            gzip_file.write(data)
-    print("Gzip file created!")
+def compress_to_gzip(indir, outdir, filename, extension='*') -> None:
+    if indir.is_file():
+        with tarfile.open(outdir / f'{filename}.tar', 'w') as tar_file:
+            tar_file.add(indir, arcname=indir.relative_to(indir.parent))
+        with open(outdir/f'{filename}.tar', 'rb') as opened_file:
+            with gzip.open(outdir/f'{filename}.tar.gz', 'wb') as gzip_file:
+                gzip_file.write(opened_file.read())
+                print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
+    else:
+        with tarfile.open(outdir / f'{filename}.tar.gz', 'w:gz') as tar_file:
+            list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
+            for file in list_of_files:
+                tar_file.add(file, arcname=file.relative_to(indir))
+        print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
 
 
 def ask_users_directory():
@@ -73,9 +82,7 @@ def user_action():
 def main():
     while True:
         action = user_action()
-        #indir, outdir = ask_users_directory()
-        indir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2\bebra')
-        outdir = Path(r'C:\Users\retro\PycharmProjects\pythonProject2\bebra')
+        indir, outdir = ask_users_directory()
         filename = input("Enter name of archive: ")
         if action == 'zip':
             compress_to_zip(indir, outdir, generate_archive_name(filename, outdir))
