@@ -1,3 +1,4 @@
+import argparse
 import datetime
 from pathlib import Path
 import zipfile
@@ -83,14 +84,35 @@ def user_action() -> str:
             pass
 
 
+def arg_parser():
+    parser = argparse.ArgumentParser("Compress any file")
+    parser.add_argument('-z', '--zip-create',
+                        help="Create a zip file(first input is input directory, second input is output directory",
+                        nargs=2,
+                        dest='zip_create')
+    parser.add_argument('-g', '--gzip-create',
+                        help="Create a gzip file(first input is input directory, second input is output directory",
+                        nargs=2,
+                        dest='gzip_create')
+    return parser.parse_args()
+
+
 def main():
-    while True:
-        action = user_action()
-        indir, outdir = ask_users_directory()
-        if action == 'zip':
-            compress_to_zip(indir, outdir, generate_archive_name(indir, outdir))
-        elif action == 'gzip':
-            compress_to_gzip(indir, outdir, generate_archive_name(indir, outdir))
+    args = arg_parser()
+    if args.zip_create:
+        indir, outdir = Path(args.zip_create[0]), Path(args.zip_create[1])
+        compress_to_zip(indir, outdir, generate_archive_name(indir, outdir))
+    elif args.gzip_create:
+        indir, outdir = Path(args.gzip_create[0]), Path(args.gzip_create[1])
+        compress_to_gzip(indir, outdir, generate_archive_name(indir, outdir))
+    else:
+        while True:
+            action = user_action()
+            indir, outdir = ask_users_directory()
+            if action == 'zip':
+                compress_to_zip(indir, outdir, generate_archive_name(indir, outdir))
+            elif action == 'gzip':
+                compress_to_gzip(indir, outdir, generate_archive_name(indir, outdir))
 
 
 if __name__ == '__main__':
