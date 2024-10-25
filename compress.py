@@ -5,7 +5,11 @@ import gzip
 import tarfile
 
 
-def generate_archive_name(filename, outdir) -> str:
+def generate_archive_name(indir, outdir) -> str:
+    if indir.is_file():
+        filename = indir.parent.name
+    else:
+        filename = indir.name
     counter = 1
     while True:
         name = f"{filename}_{datetime.date.today().strftime('%Y%m%d')}_{counter}"
@@ -30,12 +34,12 @@ def compress_to_zip(indir, outdir, filename, extension='*') -> None:
 
 def compress_to_gzip(indir, outdir, filename, extension='*') -> None:
     if indir.is_file():
-        with tarfile.open(outdir / f'{filename}.tar', 'w') as tar_file:
+        with tarfile.open(outdir / f'{filename}.tar.gz', 'w') as tar_file:
             tar_file.add(indir, arcname=indir.relative_to(indir.parent))
-        with open(outdir/f'{filename}.tar', 'rb') as opened_file:
-            with gzip.open(outdir/f'{filename}.tar.gz', 'wb') as gzip_file:
-                gzip_file.write(opened_file.read())
-                print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
+            with open(outdir/f'{filename}.tar.gz', 'rb') as opened_file:
+                with gzip.open(outdir/f'{filename}.tar.gz', 'wb') as gzip_file:
+                    gzip_file.write(opened_file.read())
+                    print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
     else:
         with tarfile.open(outdir / f'{filename}.tar.gz', 'w:gz') as tar_file:
             list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
@@ -58,7 +62,7 @@ def ask_users_directory():
     return indir, outdir
 
 
-def user_action():
+def user_action() -> str:
     while True:
         action = input("What do you want to do? (C)ompress, (Q)uit:")
         if action.lower() == "q":
@@ -83,11 +87,10 @@ def main():
     while True:
         action = user_action()
         indir, outdir = ask_users_directory()
-        filename = input("Enter name of archive: ")
         if action == 'zip':
-            compress_to_zip(indir, outdir, generate_archive_name(filename, outdir))
+            compress_to_zip(indir, outdir, generate_archive_name(indir, outdir))
         elif action == 'gzip':
-            compress_to_gzip(indir, outdir, generate_archive_name(filename, outdir))
+            compress_to_gzip(indir, outdir, generate_archive_name(indir, outdir))
 
 
 if __name__ == '__main__':
