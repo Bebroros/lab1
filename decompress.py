@@ -15,8 +15,24 @@ def path_directory():
     return source_file, output_dir
 
 
+def user_action():
+    while True:
+        action = input("Operation [d]ecompress or (q)uit: ")
+        if action == "q":
+            input("Press enter to quit")
+            return quit()
+        elif action == "d":
+            kind_of_dec = input("Choose type of archive to decompress (bzip2/xz): ")
+            if kind_of_dec == "bzip2":
+                return "bzip2"
+            if kind_of_dec == "xz":
+                return "xz"
+        pass
+        print("Invalid input. Please try again.")
+
+
 def main():
-    path_directory()
+    user_action()
 
 
 if __name__ == '__main__':
