@@ -30,9 +30,20 @@ def user_action():
         pass
         print("Invalid input. Please try again.")
 
+def decompress_bzip2():
+    print("decompress_bzip2()")
+
+def decompress_xz():
+    print("decompress_xz()")
+
 
 def main():
-    user_action()
+    action = user_action()
+    path_directory()
+    if action == "bzip2":
+        decompress_bzip2()
+    if action == "xz":
+        decompress_xz()
 
 
 if __name__ == '__main__':
