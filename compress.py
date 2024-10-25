@@ -2,7 +2,6 @@ import argparse
 import datetime
 from pathlib import Path
 import zipfile
-import gzip
 import tarfile
 
 
@@ -35,12 +34,9 @@ def compress_to_zip(indir, outdir, filename, extension='*') -> None:
 
 def compress_to_gzip(indir, outdir, filename, extension='*') -> None:
     if indir.is_file():
-        with tarfile.open(outdir / f'{filename}.tar.gz', 'w') as tar_file:
+        with tarfile.open(outdir / f'{filename}.tar.gz', 'w:gz') as tar_file:
             tar_file.add(indir, arcname=indir.relative_to(indir.parent))
-            with open(outdir/f'{filename}.tar.gz', 'rb') as opened_file:
-                with gzip.open(outdir/f'{filename}.tar.gz', 'wb') as gzip_file:
-                    gzip_file.write(opened_file.read())
-                    print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
+            print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
     else:
         with tarfile.open(outdir / f'{filename}.tar.gz', 'w:gz') as tar_file:
             list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
