@@ -50,17 +50,27 @@ def compress_to_bzip2(indir, outdir, filename, extension='*') -> None:
     if indir.is_file():
         with tarfile.open(outdir / f'{filename}.tar.bz2', 'w:bz2') as bz2_file:
             bz2_file.add(indir, arcname=indir.relative_to(indir.parent))
-        print(rf"Gzip file created in {outdir}\{filename}.tar.bz2!")
+        print(rf"B2zip file created in {outdir}\{filename}.tar.bz2!")
     else:
         with tarfile.open(outdir / f'{filename}.tar.bz2', 'w:bz2') as bz2_file:
             list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
             for file in list_of_files:
                 bz2_file.add(file, arcname=file.relative_to(indir))
-        print(rf"Gzip file created in {outdir}\{filename}.tar.bz2!")
+        print(rf"B2zip file created in {outdir}\{filename}.tar.bz2!")
 
 
-def compress_to_xz():
-    print("a")
+def compress_to_xz(indir, outdir, filename, extension='*') -> None:
+    if indir.is_file():
+        with tarfile.open(outdir / f'{filename}.tar.xz', 'w:xz') as xz_file:
+            xz_file.add(indir, arcname=indir.relative_to(indir.parent))
+        print(rf"Xz zip file created in {outdir}\{filename}.tar.xz!")
+    else:
+        with tarfile.open(outdir / f'{filename}.tar.xz', 'w:xz') as xz_file:
+            list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
+            for file in list_of_files:
+                xz_file.add(file, arcname=file.relative_to(indir))
+        print(rf"Xz zip file created in {outdir}\{filename}.tar.xz!")
+
 
 def ask_users_directory():
     while True:
