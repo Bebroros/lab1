@@ -1,4 +1,5 @@
 from pathlib import Path
+import zipfile
 
 
 def path_directory():
@@ -22,28 +23,30 @@ def user_action():
             input("Press enter to quit")
             return quit()
         elif action == "d":
-            kind_of_dec = input("Choose type of archive to decompress (bzip2/xz): ")
+            kind_of_dec = input("Choose type of archive to decompress (zip/bzip2): ")
             if kind_of_dec == "bzip2":
                 return "bzip2"
-            if kind_of_dec == "xz":
-                return "xz"
-        pass
+            if kind_of_dec == "zip":
+                return "zip"
         print("Invalid input. Please try again.")
+
+
+def decompress_zip(source_file: Path, output_dir: Path):
+    with zipfile.ZipFile(source_file, 'r') as zip_ref:
+        zip_ref.extractall(output_dir)
+
 
 def decompress_bzip2():
     print("decompress_bzip2()")
 
-def decompress_xz():
-    print("decompress_xz()")
-
 
 def main():
     action = user_action()
-    path_directory()
+    source_file, output_dir = path_directory()
+    if action == "zip":
+        decompress_zip(source_file, output_dir)
     if action == "bzip2":
         decompress_bzip2()
-    if action == "xz":
-        decompress_xz()
 
 
 if __name__ == '__main__':
