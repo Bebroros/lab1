@@ -14,11 +14,15 @@ def user_action():
             input("Press enter to quit")
             return quit()
         elif action == "d":
-            kind_of_dec = input("Choose type of archive to decompress (zip/bzip2): ")
+            kind_of_dec = input("Choose type of archive to decompress (zip/bzip2/xz/gzip): ")
             if kind_of_dec == "bzip2":
                 return "bzip2"
             if kind_of_dec == "zip":
                 return "zip"
+            if kind_of_dec == "gzip":
+                return "gzip"
+            if kind_of_dec == "xz":
+                return "xz"
         print("Invalid input. Please try again.")
 
 
@@ -35,11 +39,8 @@ def decompress_xz(indir, outdir):
 
 
 def decompress_bzip2(source_file: Path, output_dir: Path):
-    output_file = output_dir / source_file.name.replace(".bz2", "")
-    with open(source_file, "rb") as input_file:
-        decompressed_file = bz2.decompress(input_file.read())
-    with open(output_file, "wb") as output_file:
-        output_file.write(decompressed_file)
+    with tarfile.open(source_file, "r:bz2") as bz2_file:
+        bz2_file.extractall(output_dir)
     print(f"Decompressed archive created in {output_dir}")
 
 
@@ -102,6 +103,8 @@ def main():
                 decompress_bzip2(source_file, output_dir)
             if action == "gzip":
                 decompress_gzip(source_file, output_dir)
+            if action == "xz":
+                decompress_xz(source_file, output_dir)
 
 
 if __name__ == "__main__":
