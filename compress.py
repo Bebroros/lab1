@@ -14,18 +14,24 @@ def generate_archive_name(indir, outdir) -> str:
     counter = 1
     while True:
         name = f"{filename}_{datetime.date.today().strftime('%Y%m%d')}_{counter}"
-        if Path(f"{outdir}/{name}.zip").exists() or Path(f"{outdir}/{name}.gz").exists() \
-                or Path(f"{outdir}/{name}.tar.gz").exists():
+        if (Path(f"{outdir}/{name}.zip").exists() or Path(f"{outdir}/{name}.gz").exists()
+                or Path(f"{outdir}/{name}.tar.gz").exists()
+                or Path(f"{outdir}/{name}.tar.bz2").exists()
+                or Path(f"{outdir}/{name}.tar.xz").exists()):
             counter += 1
         else:
             return name
 
 
-def compress_to_zip(indir, outdir, filename, extension='*') -> None:
+def compress_to_zip(indir, outdir, filename, extensions=None) -> None:
+    if extensions is None:
+        extensions = ['*']
     with zipfile.ZipFile(outdir / f'{filename}.zip', 'w', compression=zipfile.ZIP_DEFLATED) as zip_file:
         if indir.is_dir():
-            list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()
-                             and file != outdir / f'{filename}.zip']
+            list_of_files = []
+            for extension in extensions:
+                list_of_files += [file for file in indir.rglob(f'*.{extension}') if file.is_file()
+                                 and file != outdir / f'{filename}.zip']
             for file in list_of_files:
                 zip_file.write(file, file.relative_to(indir))
         else:
@@ -33,40 +39,52 @@ def compress_to_zip(indir, outdir, filename, extension='*') -> None:
     print(rf"Zip file created in {outdir}\{filename}.zip!")
 
 
-def compress_to_gzip(indir, outdir, filename, extension='*') -> None:
+def compress_to_gzip(indir, outdir, filename, extensions=None) -> None:
+    if extensions is None:
+        extensions = ['*']
     if indir.is_file():
         with tarfile.open(outdir / f'{filename}.tar.gz', 'w:gz') as tar_file:
             tar_file.add(indir, arcname=indir.relative_to(indir.parent))
             print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
     else:
         with tarfile.open(outdir / f'{filename}.tar.gz', 'w:gz') as tar_file:
-            list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
+            list_of_files = []
+            for extension in extensions:
+                list_of_files += [file for file in indir.rglob(f'*.{extension}') if file.is_file()]
             for file in list_of_files:
                 tar_file.add(file, arcname=file.relative_to(indir))
         print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
 
 
-def compress_to_bzip2(indir, outdir, filename, extension='*') -> None:
+def compress_to_bzip2(indir, outdir, filename, extensions=None) -> None:
+    if extensions is None:
+        extensions = ['*']
     if indir.is_file():
         with tarfile.open(outdir / f'{filename}.tar.bz2', 'w:bz2') as bz2_file:
             bz2_file.add(indir, arcname=indir.relative_to(indir.parent))
         print(rf"B2zip file created in {outdir}\{filename}.tar.bz2!")
     else:
         with tarfile.open(outdir / f'{filename}.tar.bz2', 'w:bz2') as bz2_file:
-            list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
+            list_of_files = []
+            for extension in extensions:
+                list_of_files += [file for file in indir.rglob(f'*.{extension}') if file.is_file()]
             for file in list_of_files:
                 bz2_file.add(file, arcname=file.relative_to(indir))
         print(rf"B2zip file created in {outdir}\{filename}.tar.bz2!")
 
 
-def compress_to_xz(indir, outdir, filename, extension='*') -> None:
+def compress_to_xz(indir, outdir, filename, extensions=None) -> None:
+    if extensions is None:
+        extensions = ['*']
     if indir.is_file():
         with tarfile.open(outdir / f'{filename}.tar.xz', 'w:xz') as xz_file:
             xz_file.add(indir, arcname=indir.relative_to(indir.parent))
         print(rf"Xz zip file created in {outdir}\{filename}.tar.xz!")
     else:
         with tarfile.open(outdir / f'{filename}.tar.xz', 'w:xz') as xz_file:
-            list_of_files = [file for file in indir.rglob(f'{extension}') if file.is_file()]
+            list_of_files = []
+            for extension in extensions:
+                list_of_files += [file for file in indir.rglob(f'*.{extension}') if file.is_file()]
             for file in list_of_files:
                 xz_file.add(file, arcname=file.relative_to(indir))
         print(rf"Xz zip file created in {outdir}\{filename}.tar.xz!")
