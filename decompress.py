@@ -1,5 +1,6 @@
 from pathlib import Path
 import zipfile
+import bz2
 
 
 def path_directory():
@@ -32,12 +33,18 @@ def user_action():
 
 
 def decompress_zip(source_file: Path, output_dir: Path):
-    with zipfile.ZipFile(source_file, 'r') as zip_ref:
+    with zipfile.ZipFile(source_file, "r") as zip_ref:
         zip_ref.extractall(output_dir)
+    print(f"Decompressed archive created in {output_dir}")
 
 
-def decompress_bzip2():
-    print("decompress_bzip2()")
+def decompress_bzip2(source_file: Path, output_dir: Path):
+    output_file = output_dir / source_file.name.replace(".bz2", "")
+    with open(source_file, "rb") as input_file:
+        decompressed_file = bz2.decompress(input_file.read())
+    with open(output_file, "wb") as output_file:
+        output_file.write(decompressed_file)
+    print(f"Decompressed archive created in {output_dir}")
 
 
 def main():
@@ -46,8 +53,8 @@ def main():
     if action == "zip":
         decompress_zip(source_file, output_dir)
     if action == "bzip2":
-        decompress_bzip2()
+        decompress_bzip2(source_file, output_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
