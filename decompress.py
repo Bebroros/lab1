@@ -3,6 +3,8 @@ import zipfile
 import bz2
 import tarfile
 from compress import ask_users_directory
+import argparse
+import sys
 
 
 def user_action():
@@ -47,15 +49,59 @@ def decompress_gzip(indir, outdir):
     print(f"Decompressed archive created in {outdir}")
 
 
+def arg_parser():
+    arg_parser = argparse.ArgumentParser("Decompress any file")
+    compressing_group = arg_parser.add_mutually_exclusive_group()
+    compressing_group.add_argument('-z', '--zip-decompress',
+                                   help="Decompress a zip file",
+                                   dest='zip_decompress',
+                                   action='store_true')
+    compressing_group.add_argument('-b', '--bzip2-decompress',
+                                   help="Decompress a bzip2 file",
+                                   dest='bzip2_decompress',
+                                   action='store_true')
+    compressing_group.add_argument('-g', '--gzip-decompress',
+                                   help="Decompress a gzip file",
+                                   dest='gzip_decompress',
+                                   action='store_true')
+    compressing_group.add_argument('-x', '--xzip-decompress',
+                                   help="Decompress a xzip file",
+                                   dest='xzip_decompress',
+                                   action='store_true')
+    arg_parser.add_argument('-i', '--indir',
+                            help="Input directory",
+                            dest='indir',
+                            required=True)
+    arg_parser.add_argument('-o', '--outdir',
+                            help="Output directory",
+                            dest='outdir',
+                            required=True)
+    return arg_parser.parse_args()
+
+
 def main():
-    action = user_action()
-    source_file, output_dir = ask_users_directory()
-    if action == "zip":
-        decompress_zip(source_file, output_dir)
-    if action == "bzip2":
-        decompress_bzip2(source_file, output_dir)
-    if action == "gzip":
-        decompress_gzip(source_file, output_dir)
+    if len(sys.argv) > 1:
+        args = arg_parser()
+        if args.zip_decompress:
+            decompress_zip(args.indir, args.outdir)
+        if args.gzip_decompress:
+            decompress_gzip(args.indir, args.outdir)
+        elif args.bzip2_decompress:
+            decompress_bzip2(args.indir, args.outdir)
+        elif args.gzip_decompress:
+            decompress_gzip(args.indir, args.outdir)
+        elif args.xzip_decompress:
+            decompress_xz(args.indir, args.outdir)
+    else:
+        while True:
+            action = user_action()
+            source_file, output_dir = ask_users_directory()
+            if action == "zip":
+                decompress_zip(source_file, output_dir)
+            if action == "bzip2":
+                decompress_bzip2(source_file, output_dir)
+            if action == "gzip":
+                decompress_gzip(source_file, output_dir)
 
 
 if __name__ == "__main__":
