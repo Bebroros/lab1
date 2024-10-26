@@ -139,6 +139,14 @@ def arg_parser():
                                    help="Create a gzip file",
                                    dest='gzip_create',
                                    action='store_true')
+    compressing_group.add_argument('-b', '--bzip2-create',
+                                   help="Create a bzip2 file",
+                                   dest='bzip2_create',
+                                   action='store_true')
+    compressing_group.add_argument('-x', '--xzip-create',
+                                   help="Create a xzip file",
+                                   dest='xzip_create',
+                                   action='store_true')
     parser.add_argument('-i', '--indir',
                         help="Input directory",
                         dest='indir',
@@ -159,6 +167,12 @@ def main():
         elif args.gzip_create:
             compress_to_gzip(Path(args.indir), Path(args.outdir),
                              generate_archive_name(Path(args.indir), Path(args.outdir)))
+        elif args.bzip2_create:
+            compress_to_bzip2(Path(args.indir), Path(args.outdir),
+                              generate_archive_name(Path(args.indir), Path(args.outdir)))
+        elif args.xzip_create:
+            compress_to_xz(Path(args.indir), Path(args.outdir),
+                           generate_archive_name(Path(args.indir), Path(args.outdir)))
     else:
         while True:
             action = user_action()
