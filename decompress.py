@@ -26,6 +26,12 @@ def decompress_zip(source_file: Path, output_dir: Path):
     print(f"Decompressed archive created in {output_dir}")
 
 
+def decompress_xz(indir, outdir):
+    with tarfile.open(indir, "r:xz") as tar:
+        tar.extractall(outdir)
+    print(f"Decompressed archive created in {outdir}")
+
+
 def decompress_bzip2(source_file: Path, output_dir: Path):
     output_file = output_dir / source_file.name.replace(".bz2", "")
     with open(source_file, "rb") as input_file:
