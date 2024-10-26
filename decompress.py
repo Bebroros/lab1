@@ -1,20 +1,8 @@
 from pathlib import Path
 import zipfile
 import bz2
-
-
-def path_directory():
-    while True:
-        source_file = Path(input("Enter path to your file: "))
-        if source_file.exists():
-            break
-        print("Directory does not exist. Please try again.")
-    while True:
-        output_dir = Path(input("Enter path to output directory: "))
-        if output_dir.exists():
-            break
-        print("Directory does not exist. Please try again.")
-    return source_file, output_dir
+import tarfile
+from compress import ask_users_directory
 
 
 def user_action():
@@ -47,13 +35,21 @@ def decompress_bzip2(source_file: Path, output_dir: Path):
     print(f"Decompressed archive created in {output_dir}")
 
 
+def decompress_gzip(indir, outdir):
+    with tarfile.open(indir, "r:gz") as tar:
+        tar.extractall(outdir)
+    print(f"Decompressed archive created in {outdir}")
+
+
 def main():
     action = user_action()
-    source_file, output_dir = path_directory()
+    source_file, output_dir = ask_users_directory()
     if action == "zip":
         decompress_zip(source_file, output_dir)
     if action == "bzip2":
         decompress_bzip2(source_file, output_dir)
+    if action == "gzip":
+        decompress_gzip(source_file, output_dir)
 
 
 if __name__ == "__main__":
