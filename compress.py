@@ -46,6 +46,13 @@ def compress_to_gzip(indir, outdir, filename, extension='*') -> None:
         print(rf"Gzip file created in {outdir}\{filename}.tar.gz!")
 
 
+def compress_to_bzip2():
+    print(" ")
+
+
+def compress_to_xz():
+    print("a")
+
 def ask_users_directory():
     while True:
         indir = Path(input("Enter path to your file: "))
@@ -73,6 +80,10 @@ def user_action() -> str:
                 return 'zip'
             elif type_of_archive.lower() == "gzip":
                 return 'gzip'
+            elif type_of_archive.lower() == "bzip2":
+                return 'bzip2'
+            elif type_of_archive.lower() == "xz":
+                return 'xz'
             else:
                 print("Invalid input. Please try again.")
                 pass
@@ -119,6 +130,10 @@ def main():
                 compress_to_zip(indir, outdir, generate_archive_name(indir, outdir))
             elif action == 'gzip':
                 compress_to_gzip(indir, outdir, generate_archive_name(indir, outdir))
+            elif action == 'bzip2':
+                compress_to_bzip2(indir, outdir, generate_archive_name(indir, outdir))
+            elif action == 'xz':
+                compress_to_xz(indir, outdir, generate_archive_name(indir, outdir))
 
 
 if __name__ == '__main__':

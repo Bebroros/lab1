@@ -1,6 +1,5 @@
 from pathlib import Path
 import zipfile
-import bz2
 import tarfile
 from compress import ask_users_directory
 import argparse
@@ -51,8 +50,8 @@ def decompress_gzip(indir, outdir):
 
 
 def arg_parser():
-    arg_parser = argparse.ArgumentParser("Decompress any file")
-    compressing_group = arg_parser.add_mutually_exclusive_group()
+    parser = argparse.ArgumentParser("Decompress any file")
+    compressing_group = parser.add_mutually_exclusive_group()
     compressing_group.add_argument('-z', '--zip-decompress',
                                    help="Decompress a zip file",
                                    dest='zip_decompress',
@@ -69,15 +68,15 @@ def arg_parser():
                                    help="Decompress a xzip file",
                                    dest='xzip_decompress',
                                    action='store_true')
-    arg_parser.add_argument('-i', '--indir',
-                            help="Input directory",
-                            dest='indir',
-                            required=True)
-    arg_parser.add_argument('-o', '--outdir',
-                            help="Output directory",
-                            dest='outdir',
-                            required=True)
-    return arg_parser.parse_args()
+    parser.add_argument('-i', '--indir',
+                        help="Input directory",
+                        dest='indir',
+                        required=True)
+    parser.add_argument('-o', '--outdir',
+                        help="Output directory",
+                        dest='outdir',
+                        required=True)
+    return parser.parse_args()
 
 
 def main():
